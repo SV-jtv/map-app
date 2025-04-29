@@ -28,7 +28,8 @@ fun MapScreen(modifier: Modifier = Modifier) {
                 Log.d("MAP CLICKED LONG", it.toString())
             }){
             Marker(
-                state = MarkerState(position = itb), title = "ITB",
+                state = MarkerState(position = itb),
+                title = "ITB",
                 snippet = "Marker at ITB")
         }
 
