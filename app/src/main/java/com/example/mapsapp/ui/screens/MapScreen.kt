@@ -15,7 +15,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
 fun MapScreen(modifier: Modifier = Modifier) {
-    Column(modifier.fillMaxSize()) {
+    Column(Modifier.fillMaxSize()) {
         val itb = LatLng(41.4534225, 2.1837151)
         val cameraPositionState = rememberCameraPositionState {
             position = CameraPosition.fromLatLngZoom(itb, 17f)
@@ -24,7 +24,8 @@ fun MapScreen(modifier: Modifier = Modifier) {
             modifier.fillMaxSize(), cameraPositionState = cameraPositionState,
             onMapClick = {
                 Log.d("MAP CLICKED", it.toString())
-            }, onMapLongClick = {
+            },
+            onMapLongClick = {
                 Log.d("MAP CLICKED LONG", it.toString())
             }){
             Marker(

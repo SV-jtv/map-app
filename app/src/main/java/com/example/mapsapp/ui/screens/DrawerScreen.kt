@@ -34,6 +34,7 @@ fun DrawerScreen() {
         val scope = rememberCoroutineScope()
         var selectedItemIndex by remember { mutableIntStateOf(0) }
         ModalNavigationDrawer(
+            gesturesEnabled = false,
             drawerContent = {
                 ModalDrawerSheet {
                     DrawerItem.entries.forEachIndexed { index, drawerItem ->
