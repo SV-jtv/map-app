@@ -7,22 +7,25 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mapsapp.viewmodels.MyViewModel
+import androidx.compose.runtime.getValue
+
 
 @Composable
-fun DetailMarkerScreen(studentId: String, navigateBack: () -> Unit) {
+fun DetailMarkerScreen(modifier: Modifier, studentId: String, navigateBack: () -> Unit) {
     val myViewModel = viewModel<MyViewModel>()
-    myViewModel.getStudent(studentId)
-    val studentName: String by myViewModel.studentName.observeAsState("")
-    val studentMark: String by myViewModel.studentMark.observeAsState("")
-    Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-        TextField(value = studentName, onValueChange = { myViewModel.editStudentName(it) })
-        TextField(value = studentMark, onValueChange = { myViewModel.editStudentMark(it) })
+    myViewModel.getMarker(studentId)
+    val studentName: String by myViewModel.markerName.observeAsState("")
+    val studentMark: String by myViewModel.markerCoordenades.observeAsState("")
+    Column(modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+        TextField(value = studentName, onValueChange = { myViewModel.editMarkerName(it) })
+        TextField(value = studentMark, onValueChange = { myViewModel.editMarkerCoordenades(it) })
         Button(onClick = {
-            myViewModel.updateStudent(studentId, studentName, studentMark,  )
+            //myViewModel.updateMarker(studentId, studentName, studentMark,  )
             navigateBack()}) {
             Text("Update")
         }

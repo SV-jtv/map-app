@@ -18,24 +18,30 @@ import com.example.mapsapp.ui.screens.MarkerListScreen
 
 @Composable
 fun InternalNavigationWrapper(navController: NavHostController, modifier: Modifier) {
-    val navControler = rememberNavController()
-    NavHost(navControler, Map) {
+    //val navControler = rememberNavController()
+    NavHost(navController, Map) {
         composable<Map>{
-            MapScreen(modifier)
+            MapScreen(modifier){
+                    coordenades -> navController.navigate(CreateMarker(coordenades))
+            }
         }
         composable<List> {
-            MarkerListScreen(modifier)
+            MarkerListScreen(modifier){
+                studentId -> navController.navigate(DetailMarker(studentId))
+            }
         }
         composable<CreateMarker> { backStackEntry ->
             val pantallaCreate = backStackEntry.toRoute<CreateMarker>()
-            CreateMarkerScreen(pantallaCreate.coordenades)
-            navController.popBackStack()
+            CreateMarkerScreen(modifier, pantallaCreate.coordenades ){
+                navController.popBackStack()
+            }
 
         }
         composable<DetailMarker> { backStackEntry ->
             val pantallaDetail = backStackEntry.toRoute<DetailMarker>()
-            DetailMarkerScreen(pantallaDetail.myParameter)
-            navController.popBackStack()
+            DetailMarkerScreen(modifier, pantallaDetail.myParameter){
+                navController.popBackStack()
+            }
         }
 
     }

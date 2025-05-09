@@ -6,7 +6,7 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.mapsapp.MyApp
-import com.example.mapsapp.data.Student
+import com.example.mapsapp.data.Marker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,80 +16,78 @@ import java.io.ByteArrayOutputStream
 class MyViewModel: ViewModel() {
     val database = MyApp.database
 
-    private val _studentsList = MutableLiveData<List<Student>>()
-    val studentsList = _studentsList
+    private val _markerList = MutableLiveData<List<Marker>>()
+    val markerList = _markerList
 
-    private var _selectedStudent: Student? = null
+    private var _selectedMarker: Marker? = null
 
-    private val _studentName = MutableLiveData<String>()
-    val studentName = _studentName
+    private val _markerName = MutableLiveData<String>()
+    val markerName = _markerName
 
-    private val _studentMark = MutableLiveData<String>()
-    val studentMark = _studentMark
+    private val _markerCoordenades = MutableLiveData<String>()
+    val markerCoordenades = _markerCoordenades
 
-    fun getAllStudents() {
+    fun getAllMarkers() {
         CoroutineScope(Dispatchers.IO).launch {
-            val databaseStudents = database.getAllStudents()
+            val databaseStudents = database.getAllMarkers()
             withContext(Dispatchers.Main) {
-                _studentsList.value = databaseStudents
+                _markerList.value = databaseStudents
             }
         }
     }
 
-    fun insertNewStudent(name: String, mark: String) {
-        val newStudent = Student(name = name, mark = mark.toDouble())
-        CoroutineScope(Dispatchers.IO).launch {
-            database.insertStudent(newStudent)
-            getAllStudents()
-        }
-    }
-
-    fun updateStudent(id: String, name: String, mark: String, image: Bitmap?){
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun insertNewMarker(name: String, coordenades: String, image: Bitmap?) {
         val stream = ByteArrayOutputStream()
         image?.compress(Bitmap.CompressFormat.PNG, 0, stream)
-        val imageName = _selectedStudent.value?.image?.removePrefix("https://aobflzinjcljzqpxpcxs.supabase.co/storage/v1/object/public/images/")
         CoroutineScope(Dispatchers.IO).launch {
-            database.updateStudent(id, name, mark.toDouble(), imageName.toString(), stream.toByteArray())
+            val imageName = database.uploadImage(stream.toByteArray())
+            val marker = Marker(
+                name= name,
+                coordenades= coordenades,
+                image= image.toString()
+            )
+            database.insertMarker(name, coordenades, imageName)
         }
     }
 
-    fun deleteStudent(id: String, image: String){
+
+    fun updateMarker(id: String, name: String, coordenades: String, image: Bitmap?){
+        val stream = ByteArrayOutputStream()
+        image?.compress(Bitmap.CompressFormat.PNG, 0, stream)
+        val imageName = _selectedMarker?.image?.removePrefix("https://aobflzinjcljzqpxpcxs.supabase.co/storage/v1/object/public/images/")
         CoroutineScope(Dispatchers.IO).launch {
-            database.deleteImage(image)
-            database.deleteStudent(id)
-            getAllStudents()
+            database.updateMarker(id, name, coordenades.toDouble(), imageName.toString(), stream.toByteArray())
         }
     }
 
-    fun getStudent(id: String){
-        if(_selectedStudent == null){
+
+    fun deleteMarker(id: String){
+        CoroutineScope(Dispatchers.IO).launch {
+            database.deleteMarker(id)
+            getAllMarkers()
+        }
+    }
+
+    fun getMarker(id: String){
+        if(_selectedMarker == null){
             CoroutineScope(Dispatchers.IO).launch {
-                val student = database.getStudent(id)
+                val student = database.getMarker(id)
                 withContext(Dispatchers.Main) {
-                    _selectedStudent = student
-                    _studentName.value = student.name
-                    _studentMark.value = student.mark.toString()
+                    _selectedMarker = student
+                    _markerName.value = student.name
+                    _markerCoordenades.value = student.coordenades.toString()
                 }
             }
         }
     }
 
-    fun editStudentName(name: String) {
-        _studentName.value = name
+    fun editMarkerName(name: String) {
+        _markerName.value = name
     }
 
-    fun editStudentMark(mark: String) {
-        _studentMark.value = mark
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun insertNewStudent(name: String, mark: String, image: Bitmap?) {
-        val stream = ByteArrayOutputStream()
-        image?.compress(Bitmap.CompressFormat.PNG, 0, stream)
-        CoroutineScope(Dispatchers.IO).launch {
-            val imageName = database.uploadImage(stream.toByteArray())
-            database.insertStudent(name, mark.toDouble(), imageName)
-        }
+    fun editMarkerCoordenades(Coordenades: String) {
+        _markerCoordenades.value = Coordenades
     }
 
 }

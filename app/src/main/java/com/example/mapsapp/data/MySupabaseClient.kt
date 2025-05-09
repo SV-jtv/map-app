@@ -27,27 +27,27 @@ class MySupabaseClient {
     }
 
 
-    suspend fun getAllStudents(): List<Student> {
-        return client.from("Student").select().decodeList<Student>()
+    suspend fun getAllMarkers(): List<Marker> {
+        return client.from("Student").select().decodeList<Marker>()
     }
 
-    suspend fun getStudent(id: String): Student{
+    suspend fun getMarker(id: String): Marker{
         return client.from("Student").select {
             filter {
                 eq("id", id)
             }
-        }.decodeSingle<Student>()
+        }.decodeSingle<Marker>()
     }
 
-    suspend fun insertStudent(student: Student){
-        client.from("Student").insert(student)
+    suspend fun insertMarker(name: String, coordenades: String, imageName1: String){
+        client.from("Student").insert(name, coordenades)
     }
 
-    suspend fun updateStudent(id: String, name: String, mark: Double, imageName: String, imageFile: ByteArray) {
+    suspend fun updateMarker(id: String, name: String, coordenades: Double, imageName: String, imageFile: ByteArray) {
         val imageName = storage.from("images").update(path = imageName, data = imageFile)
         client.from("Student").update({
             set("name", name)
-            set("mark", mark)
+            set("marker", coordenades)
             set("image", buildImageUrl(imageFileName = imageName.path))
         }) {
             filter {
@@ -57,7 +57,7 @@ class MySupabaseClient {
     }
 
 
-    suspend fun deleteStudent(id: String){
+    suspend fun deleteMarker(id: String){
         client.from("Student").delete{ filter { eq("id", id) } }
     }
 

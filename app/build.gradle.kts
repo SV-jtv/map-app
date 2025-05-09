@@ -81,6 +81,8 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.foundation.layout.android)
+    implementation(libs.androidx.foundation.layout.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -98,6 +100,9 @@ dependencies {
     implementation("io.github.jan-tennert.supabase:storage-kt:$3.1.4")
     implementation("io.ktor:ktor-client-android:3.1.2")
     implementation("io.coil-kt:coil-compose:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.0")
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.9.0")
+    implementation("androidx.compose.runtime:runtime-livedata:1.8.1")
 
 }
 

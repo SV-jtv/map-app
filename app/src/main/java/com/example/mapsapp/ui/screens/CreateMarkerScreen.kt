@@ -13,7 +13,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,10 +21,12 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,34 +34,23 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.mapsapp.viewmodels.MyViewModel
 import com.google.android.gms.maps.model.LatLng
 import java.io.File
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun CreateMarkerScreen(coordenades: String) {
-
-}
-
-
-@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-@Composable
-fun StringToLatLng(coordenades: String): LatLng {
-    /*val latlng: Array<String?> =
-        coordenades.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-    val latitude = latlng[0]!!.toDouble()
-    val longitude = latlng[1]!!.toDouble()
-    val lcation = LatLng(latitude, longitude)*/
-
-    val latLng: Location = Location(coordenades)
-    val location = LatLng(latLng.latitude, latLng.longitude)
-    return location
-}
-
-@Composable
-fun CameraScreen() {
+fun CreateMarkerScreen(modifier: Modifier, coordenades: String, navigateBack: () -> Unit) {
+    val myViewModel = viewModel<MyViewModel>()
+    val markerName: String by myViewModel.markerName.observeAsState("")
+    val markerCoordenades: String by myViewModel.markerCoordenades.observeAsState("")
+    myViewModel.editMarkerCoordenades(coordenades)
     val context = LocalContext.current
     val imageUri = remember { mutableStateOf<Uri?>(null) }
     val bitmap = remember { mutableStateOf<Bitmap?>(null) }
@@ -105,12 +96,19 @@ fun CameraScreen() {
             }
         )
     }
-
-
     Column(
-        modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = modifier
+            .fillMaxWidth(),
+            //.weight(0.4f),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
+        Text("Create new marker", fontSize = 28.sp, fontWeight = FontWeight.Bold)
+        Spacer(modifier = Modifier.height(24.dp))
+        TextField(value = markerName, onValueChange = { myViewModel.editMarkerName(it) })
+        //TextField(value = markerCoordenades, onValueChange = { myViewModel.editMarkerCoordenades(coordenades) })
+        Spacer(modifier = Modifier.height(24.dp))
+
         Button(onClick = { showDialog = true }) {
             Text("Abrir Cámara o Galería")
         }
@@ -125,8 +123,28 @@ fun CameraScreen() {
                 contentScale = ContentScale.Crop
             )
         }
+        Button(onClick = {
+            myViewModel.insertNewMarker(markerName, markerCoordenades, bitmap.value)
+            navigateBack()
+        }) {
+            Text("Insert")
+        }
     }
+}
 
+
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
+@Composable
+fun StringToLatLng(coordenades: String): LatLng {
+    /*val latlng: Array<String?> =
+        coordenades.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
+    val latitude = latlng[0]!!.toDouble()
+    val longitude = latlng[1]!!.toDouble()
+    val lcation = LatLng(latitude, longitude)*/
+
+    val latLng: Location = Location(coordenades)
+    val location = LatLng(latLng.latitude, latLng.longitude)
+    return location
 }
 
 fun createImageUri(context: Context): Uri? {
