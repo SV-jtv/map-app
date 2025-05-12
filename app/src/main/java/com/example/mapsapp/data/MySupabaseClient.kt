@@ -39,15 +39,15 @@ class MySupabaseClient {
         }.decodeSingle<Marker>()
     }
 
-    suspend fun insertMarker(name: String, coordenades: String, imageName1: String){
-        client.from("Student").insert(name, coordenades)
+    suspend fun insertMarker(newMarker: Marker) {
+        client.from("Student").insert(newMarker)
     }
 
     suspend fun updateMarker(id: String, name: String, coordenades: Double, imageName: String, imageFile: ByteArray) {
         val imageName = storage.from("images").update(path = imageName, data = imageFile)
         client.from("Student").update({
             set("name", name)
-            set("marker", coordenades)
+            set("coordenades", coordenades)
             set("image", buildImageUrl(imageFileName = imageName.path))
         }) {
             filter {

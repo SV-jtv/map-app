@@ -27,6 +27,9 @@ class MyViewModel: ViewModel() {
     private val _markerCoordenades = MutableLiveData<String>()
     val markerCoordenades = _markerCoordenades
 
+    private val _markerImage = MutableLiveData<String?>()
+    val markerImage = _markerImage
+
     fun getAllMarkers() {
         CoroutineScope(Dispatchers.IO).launch {
             val databaseStudents = database.getAllMarkers()
@@ -42,12 +45,12 @@ class MyViewModel: ViewModel() {
         image?.compress(Bitmap.CompressFormat.PNG, 0, stream)
         CoroutineScope(Dispatchers.IO).launch {
             val imageName = database.uploadImage(stream.toByteArray())
-            val marker = Marker(
+            val newMarker = Marker(
                 name= name,
                 coordenades= coordenades,
-                image= image.toString()
+                image= imageName
             )
-            database.insertMarker(name, coordenades, imageName)
+            database.insertMarker(newMarker)
         }
     }
 
@@ -77,6 +80,7 @@ class MyViewModel: ViewModel() {
                     _selectedMarker = student
                     _markerName.value = student.name
                     _markerCoordenades.value = student.coordenades.toString()
+                    _markerImage.value = student.image
                 }
             }
         }
@@ -86,8 +90,12 @@ class MyViewModel: ViewModel() {
         _markerName.value = name
     }
 
-    fun editMarkerCoordenades(Coordenades: String) {
-        _markerCoordenades.value = Coordenades
+    fun setMarkerCoordenades(coordenades: String) {
+        _markerCoordenades.value = coordenades
+    }
+
+    fun editMarkerImage(image: String) {
+        _markerImage.value = image
     }
 
 }

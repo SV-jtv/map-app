@@ -19,11 +19,11 @@ import androidx.compose.runtime.getValue
 fun DetailMarkerScreen(modifier: Modifier, studentId: String, navigateBack: () -> Unit) {
     val myViewModel = viewModel<MyViewModel>()
     myViewModel.getMarker(studentId)
-    val studentName: String by myViewModel.markerName.observeAsState("")
-    val studentMark: String by myViewModel.markerCoordenades.observeAsState("")
+    val markerName: String by myViewModel.markerName.observeAsState("")
+    val markerImage: String by myViewModel.markerName.observeAsState("")
     Column(modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-        TextField(value = studentName, onValueChange = { myViewModel.editMarkerName(it) })
-        TextField(value = studentMark, onValueChange = { myViewModel.editMarkerCoordenades(it) })
+        TextField(value = markerName, onValueChange = { myViewModel.editMarkerName(it) })
+        TextField(value = markerImage, onValueChange = { myViewModel.editMarkerImage(it) })
         Button(onClick = {
             //myViewModel.updateMarker(studentId, studentName, studentMark,  )
             navigateBack()}) {

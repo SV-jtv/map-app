@@ -111,7 +111,7 @@ fun StudentItem(marker: Marker, navigateToDetail: (String) -> Unit) {
             horizontalArrangement = Arrangement.Center
         ) {
             Text(marker.name, fontSize = 28.sp, fontWeight = FontWeight.Bold)
-            Text(text = "Mark: ${marker.coordenades}")
+            //Text(text = "Mark: ${marker.coordenades}")
         }
     }
 }

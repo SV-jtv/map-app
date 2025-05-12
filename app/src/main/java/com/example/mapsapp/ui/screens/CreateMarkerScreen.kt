@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.location.Location
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -50,7 +51,6 @@ fun CreateMarkerScreen(modifier: Modifier, coordenades: String, navigateBack: ()
     val myViewModel = viewModel<MyViewModel>()
     val markerName: String by myViewModel.markerName.observeAsState("")
     val markerCoordenades: String by myViewModel.markerCoordenades.observeAsState("")
-    myViewModel.editMarkerCoordenades(coordenades)
     val context = LocalContext.current
     val imageUri = remember { mutableStateOf<Uri?>(null) }
     val bitmap = remember { mutableStateOf<Bitmap?>(null) }
@@ -105,14 +105,15 @@ fun CreateMarkerScreen(modifier: Modifier, coordenades: String, navigateBack: ()
     ) {
         Text("Create new marker", fontSize = 28.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(24.dp))
-        TextField(value = markerName, onValueChange = { myViewModel.editMarkerName(it) })
-        //TextField(value = markerCoordenades, onValueChange = { myViewModel.editMarkerCoordenades(coordenades) })
+        TextField(value = markerName, onValueChange = { myViewModel.editMarkerName(it) }, label = { Text("Marker name") })
+        myViewModel.setMarkerCoordenades(coordenades)
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(onClick = { showDialog = true }) {
             Text("Abrir Cámara o Galería")
         }
         Spacer(modifier = Modifier.height(24.dp))
+        Log.d("PHOTO", bitmap.value.toString())
         bitmap.value?.let {
             Image(
                 bitmap = it.asImageBitmap(),
