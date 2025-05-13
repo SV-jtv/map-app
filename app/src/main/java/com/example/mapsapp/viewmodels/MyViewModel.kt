@@ -55,13 +55,16 @@ class MyViewModel: ViewModel() {
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun updateMarker(id: String, name: String, coordenades: String, image: Bitmap?){
-        val stream = ByteArrayOutputStream()
+        /*val stream = ByteArrayOutputStream()
         image?.compress(Bitmap.CompressFormat.PNG, 0, stream)
         val imageName = _selectedMarker?.image?.removePrefix("https://aobflzinjcljzqpxpcxs.supabase.co/storage/v1/object/public/images/")
         CoroutineScope(Dispatchers.IO).launch {
-            database.updateMarker(id, name, coordenades.toDouble(), imageName.toString(), stream.toByteArray())
-        }
+            database.updateMarker(id, name, coordenades, imageName.toString(), stream.toByteArray())
+        }*/
+        deleteMarker(id)
+        insertNewMarker(name,coordenades,image)
     }
 
 

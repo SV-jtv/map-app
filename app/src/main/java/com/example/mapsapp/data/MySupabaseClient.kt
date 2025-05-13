@@ -43,7 +43,7 @@ class MySupabaseClient {
         client.from("Student").insert(newMarker)
     }
 
-    suspend fun updateMarker(id: String, name: String, coordenades: Double, imageName: String, imageFile: ByteArray) {
+    /*suspend fun updateMarker(id: String, name: String, coordenades: String, imageName: String, imageFile: ByteArray) {
         val imageName = storage.from("images").update(path = imageName, data = imageFile)
         client.from("Student").update({
             set("name", name)
@@ -54,7 +54,7 @@ class MySupabaseClient {
                 eq("id", id)
             }
         }
-    }
+    }*/
 
 
     suspend fun deleteMarker(id: String){

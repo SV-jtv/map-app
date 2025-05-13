@@ -56,7 +56,7 @@ fun DrawerScreen() {
             Scaffold(
                 topBar = {
                     TopAppBar(
-                        title = { Text("") }, //Maps App
+                        title = { Text("Maps App") }, //Maps App
                         navigationIcon = {
                             IconButton(onClick = { scope.launch { drawerState.open() } }) {
                                 Icon(imageVector = Icons.Default.Menu, contentDescription = "Menu")

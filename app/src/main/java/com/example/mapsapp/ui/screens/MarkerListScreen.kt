@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -36,7 +38,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import com.example.mapsapp.data.Marker
 
-
 @Composable
 fun MarkerListScreen(modifier: Modifier, navigateToDetail: (String) -> Unit) {
     val myViewModel = viewModel<MyViewModel>()
@@ -61,6 +62,7 @@ fun MarkerListScreen(modifier: Modifier, navigateToDetail: (String) -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
+            Spacer(modifier = Modifier.height(24.dp))
             LazyColumn(
                 Modifier
                     .fillMaxWidth()
@@ -77,13 +79,13 @@ fun MarkerListScreen(modifier: Modifier, navigateToDetail: (String) -> Unit) {
                             }
                         }
                     )
-                    SwipeToDismissBox(state = dissmissState, backgroundContent = {
+                    SwipeToDismissBox(state = dissmissState, modifier = Modifier.padding(vertical = 4.dp), backgroundContent = {
                         Box(
                             Modifier
                                 .fillMaxSize()
                                 .background(Color.Red)
                                 .padding(horizontal = 20.dp),
-                            contentAlignment = Alignment.BottomEnd
+                            contentAlignment = Alignment.CenterEnd
                         ) {
                             Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete")
                         }
@@ -104,13 +106,14 @@ fun StudentItem(marker: Marker, navigateToDetail: (String) -> Unit) {
             .fillMaxWidth()
             .background(Color.LightGray)
             .border(width = 2.dp, Color.DarkGray)
-            .clickable { navigateToDetail(marker.id.toString()) }) {
+            .clickable { navigateToDetail(marker.id.toString()) }
+            ) {
         Row(
-            Modifier.fillMaxWidth(),
+            Modifier.fillMaxWidth().padding(vertical = 3.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            Text(marker.name, fontSize = 28.sp, fontWeight = FontWeight.Bold)
+            Text(marker.name, fontSize = 28.sp, fontWeight = FontWeight.Bold, color = Color.DarkGray)
             //Text(text = "Mark: ${marker.coordenades}")
         }
     }

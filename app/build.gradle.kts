@@ -103,6 +103,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.0")
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.9.0")
     implementation("androidx.compose.runtime:runtime-livedata:1.8.1")
+    implementation ("androidx.compose.material:material-icons-extended:1.4.3")
 
 }
 
