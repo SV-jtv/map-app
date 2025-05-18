@@ -3,7 +3,6 @@ package com.example.mapsapp.ui.screens
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.location.Location
 import android.net.Uri
 import android.os.Build
 import android.util.Log
@@ -45,9 +44,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
+import androidx.core.graphics.scale
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mapsapp.viewmodels.MyViewModel
-import com.google.android.gms.maps.model.LatLng
 import java.io.File
 
 
@@ -61,11 +60,39 @@ fun CreateMarkerScreen(modifier: Modifier, coordenades: String, navigateBack: ()
     val imageUri = remember { mutableStateOf<Uri?>(null) }
     val bitmap = remember { mutableStateOf<Bitmap?>(null) }
 
-    val takePictureLauncher =
+    /*val takePictureLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
             if (success && imageUri.value != null) {
                 val stream = context.contentResolver.openInputStream(imageUri.value!!)
                 bitmap.value = BitmapFactory.decodeStream(stream)
+            }
+        }*/
+
+    val takePictureLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+            if (success && imageUri.value != null) {
+                val stream = context.contentResolver.openInputStream(imageUri.value!!)
+                stream?.use { // Decodificar el flujo a un Bitmap
+                    val originalBitmap = BitmapFactory.decodeStream(it)
+                    // Obtener las dimensiones originales de la imagen
+                    val originalWidth = originalBitmap.width
+                    val originalHeight = originalBitmap.height
+                    // Definir el aspect ratio (relación entre ancho y alto)
+                    val aspectRatio = originalWidth.toFloat() / originalHeight.toFloat()
+                    // Establecer el tamaño máximo que deseas para la imagen (por ejemplo, un ancho máximo)
+                    val maxWidth = 800 // Puedes establecer el valor que prefieras
+                    // Calcular el nuevo ancho y alto manteniendo el aspect ratio
+                    val newWidth = maxWidth
+                    val newHeight = (newWidth / aspectRatio).toInt()
+                    // Redimensionar el bitmap mientras se mantiene el aspect ratio
+                    val resizedBitmap = originalBitmap.scale(newWidth, newHeight)
+                    // Establecer el Bitmap redimensionado en el ViewModel
+                    bitmap.value = resizedBitmap
+                } ?: run {
+                    Log.e("TakePicture", "Error al abrir InputStream para la URI de la imagen.")
+                }
+            } else {
+                Log.e("TakePicture", "La imagen no fue tomada o la URI de la imagen es nula.")
             }
         }
 
@@ -77,6 +104,7 @@ fun CreateMarkerScreen(modifier: Modifier, coordenades: String, navigateBack: ()
                 bitmap.value = BitmapFactory.decodeStream(stream)
             }
         }
+
 
     var showDialog by remember { mutableStateOf(false) }
 
@@ -157,21 +185,6 @@ fun CreateMarkerScreen(modifier: Modifier, coordenades: String, navigateBack: ()
             Text("Insert")
         }
     }
-}
-
-
-@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-@Composable
-fun StringToLatLng(coordenades: String): LatLng {
-    /*val latlng: Array<String?> =
-        coordenades.split(",".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-    val latitude = latlng[0]!!.toDouble()
-    val longitude = latlng[1]!!.toDouble()
-    val lcation = LatLng(latitude, longitude)*/
-
-    val latLng: Location = Location(coordenades)
-    val location = LatLng(latLng.latitude, latLng.longitude)
-    return location
 }
 
 fun createImageUri(context: Context): Uri? {

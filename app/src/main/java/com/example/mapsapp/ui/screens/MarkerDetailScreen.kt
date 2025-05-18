@@ -1,5 +1,3 @@
-@file:Suppress("UNUSED_EXPRESSION")
-
 package com.example.mapsapp.ui.screens
 
 import android.graphics.Bitmap
@@ -14,17 +12,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -50,8 +45,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.graphics.scale
 import coil.compose.AsyncImage
-import kotlinx.coroutines.launch
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -59,18 +54,46 @@ import kotlinx.coroutines.launch
 fun DetailMarkerScreen(modifier: Modifier, Id: String, navigateBack: () -> Unit) {
     val myViewModel = viewModel<MyViewModel>()
     val markerName: String by myViewModel.markerName.observeAsState("")
-    val markerImage: String? by myViewModel.markerImage.observeAsState("")
+    val markerImage: String? by myViewModel.markerImageUrl.observeAsState("")
     val markerCoordenades: String by myViewModel.markerCoordenades.observeAsState("")
     myViewModel.getMarker(Id)
     val context = LocalContext.current
     val imageUri = remember { mutableStateOf<Uri?>(null) }
     val bitmap = remember { mutableStateOf<Bitmap?>(null) }
 
-    val takePictureLauncher =
+    /*val takePictureLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
             if (success && imageUri.value != null) {
                 val stream = context.contentResolver.openInputStream(imageUri.value!!)
                 bitmap.value = BitmapFactory.decodeStream(stream)
+            }
+        }*/
+
+    val takePictureLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+            if (success && imageUri.value != null) {
+                val stream = context.contentResolver.openInputStream(imageUri.value!!)
+                stream?.use { // Decodificar el flujo a un Bitmap
+                    val originalBitmap = BitmapFactory.decodeStream(it)
+                    // Obtener las dimensiones originales de la imagen
+                    val originalWidth = originalBitmap.width
+                    val originalHeight = originalBitmap.height
+                    // Definir el aspect ratio (relación entre ancho y alto)
+                    val aspectRatio = originalWidth.toFloat() / originalHeight.toFloat()
+                    // Establecer el tamaño máximo que deseas para la imagen (por ejemplo, un ancho máximo)
+                    val maxWidth = 800 // Puedes establecer el valor que prefieras
+                    // Calcular el nuevo ancho y alto manteniendo el aspect ratio
+                    val newWidth = maxWidth
+                    val newHeight = (newWidth / aspectRatio).toInt()
+                    // Redimensionar el bitmap mientras se mantiene el aspect ratio
+                    val resizedBitmap = originalBitmap.scale(newWidth, newHeight)
+                    // Establecer el Bitmap redimensionado en el ViewModel
+                    bitmap.value = resizedBitmap
+                } ?: run {
+                    Log.e("TakePicture", "Error al abrir InputStream para la URI de la imagen.")
+                }
+            } else {
+                Log.e("TakePicture", "La imagen no fue tomada o la URI de la imagen es nula.")
             }
         }
 

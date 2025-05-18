@@ -101,9 +101,10 @@ dependencies {
     implementation("io.ktor:ktor-client-android:3.1.2")
     implementation("io.coil-kt:coil-compose:2.7.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.0")
-    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.9.0")
+    implementation (libs.androidx.lifecycle.livedata.ktx)
     implementation("androidx.compose.runtime:runtime-livedata:1.8.1")
     implementation ("androidx.compose.material:material-icons-extended:1.4.3")
+    implementation(libs.auth.kt)
 
 }
 

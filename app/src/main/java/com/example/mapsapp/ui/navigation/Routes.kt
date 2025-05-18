@@ -1,6 +1,5 @@
 package com.example.mapsapp.ui.navigation
 
-import com.google.android.gms.maps.model.LatLng
 import kotlinx.serialization.Serializable
 
 
@@ -22,4 +21,10 @@ sealed class Destination {
 
     @Serializable
     data class DetailMarker(val myParameter: String)
+
+    @Serializable
+    object LogIn : Destination()
+
+    @Serializable
+    object Register: Destination()
 }

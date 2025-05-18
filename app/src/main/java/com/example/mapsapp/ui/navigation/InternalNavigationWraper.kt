@@ -1,11 +1,12 @@
 package com.example.mapsapp.ui.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.mapsapp.ui.navigation.Destination.CreateMarker
 import com.example.mapsapp.ui.navigation.Destination.DetailMarker
@@ -16,6 +17,7 @@ import com.example.mapsapp.ui.screens.DetailMarkerScreen
 import com.example.mapsapp.ui.screens.MapScreen
 import com.example.mapsapp.ui.screens.MarkerListScreen
 
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @Composable
 fun InternalNavigationWrapper(navController: NavHostController, modifier: Modifier) {
     //val navControler = rememberNavController()

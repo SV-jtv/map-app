@@ -13,15 +13,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,7 +39,7 @@ import com.example.mapsapp.data.Marker
 @Composable
 fun MarkerListScreen(modifier: Modifier, navigateToDetail: (String) -> Unit) {
     val myViewModel = viewModel<MyViewModel>()
-    val markerList by myViewModel.markerList.observeAsState(emptyList<Marker>())
+    val markerList by myViewModel.markerList.observeAsState(emptyList())
     LaunchedEffect(Unit) {
         myViewModel.getAllMarkers()
     }
@@ -62,13 +60,16 @@ fun MarkerListScreen(modifier: Modifier, navigateToDetail: (String) -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
+
             Spacer(modifier = Modifier.height(24.dp))
+
             LazyColumn(
                 Modifier
                     .fillMaxWidth()
                     .weight(0.6f)
-            ) {
-                items(markerList) { marker ->
+            )
+            {
+                itemsIndexed(markerList, key = {_, marker -> marker.id.toString() }) { _, marker ->
                     val dissmissState = rememberSwipeToDismissBoxState(
                         confirmValueChange = {
                             if (it == SwipeToDismissBoxValue.EndToStart) {
