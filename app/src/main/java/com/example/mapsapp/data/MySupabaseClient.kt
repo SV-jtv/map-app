@@ -99,7 +99,7 @@ class MySupabaseClient {
     }
 
 
-    /*suspend fun updateMarker(id: String, name: String, coordenades: String, imageName: String, imageFile: ByteArray) {
+    /*suspend fun updateMarker0(id: String, name: String, coordenades: String, imageName: String, imageFile: ByteArray) {
         val imageName = storage.from("images").update(path = imageName, data = imageFile)
         client.from("Student").update({
             set("name", name)
@@ -111,6 +111,39 @@ class MySupabaseClient {
             }
         }
     }*/
+
+    // Eh actualizado el registro Marker con los campos, y sube imagen si imageFile no vacío
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun updateMarker(id: String, name: String, coordenades: String, imageName: String, imageFile: ByteArray) {
+        var finalImageUrl = imageName
+
+        if (imageFile.isNotEmpty()) {
+            try {
+                // Eliminar imagen anterior
+                deleteImage(imageName)
+
+                // Subir nueva imagen y obtener su URL
+                finalImageUrl = uploadImage(imageFile)
+            } catch (e: Exception) {
+                throw Exception("Error actualizando imagen: ${e.message}", e)
+            }
+        }
+
+        try {
+            val updateMap = mapOf(
+                "name" to name,
+                "coordenades" to coordenades,
+                "image" to finalImageUrl
+            )
+
+            client.from("Student").update(updateMap) {
+                filter { eq("id", id) }
+            }
+        } catch (e: Exception) {
+            throw Exception("Error actualizando Student: ${e.message}", e)
+        }
+    }
+
 
     suspend fun getBitmapDescriptorFromUrl(context: Context, imageUrl: String): BitmapDescriptor? {
         return try {

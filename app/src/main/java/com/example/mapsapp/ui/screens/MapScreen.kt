@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -20,6 +21,9 @@ import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.maps.android.compose.rememberCameraPositionState
+import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.MapType
+
 
 
 @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
@@ -31,14 +35,21 @@ fun MapScreen(modifier: Modifier = Modifier, navigateToDetail: (String) -> Unit)
         val context = LocalContext.current
         val itb = LatLng(41.4534225, 2.1837151)
         val cameraPositionState = rememberCameraPositionState {
-            position = CameraPosition.fromLatLngZoom(itb, 17f)
+            position = CameraPosition.fromLatLngZoom(itb, 16f)
         }
         LaunchedEffect(Unit) {
             myViewModel.getAllMarkers()
         }
 
+        // 👇 Usamos MapProperties para establecer el tipo de mapa
+        val mapProperties = remember {
+            MapProperties(mapType = MapType.HYBRID)
+        }
+
         GoogleMap(
-            modifier.fillMaxSize(), cameraPositionState = cameraPositionState,
+            modifier = modifier.fillMaxSize(),
+            cameraPositionState = cameraPositionState,
+            properties = mapProperties, // 👈 Aquí está el cambio
             onMapClick = {
                 Log.d("MAP CLICKED", it.toString())
             },
@@ -58,7 +69,7 @@ fun MapScreen(modifier: Modifier = Modifier, navigateToDetail: (String) -> Unit)
 
                 LaunchedEffect(marker.image) {
                     if (icon == null) {
-                        myViewModel.loadMarkerIcon(marker.image, context)
+                        myViewModel.loadMarkerIcon(marker.image!!, context)
                     }
                 }
 

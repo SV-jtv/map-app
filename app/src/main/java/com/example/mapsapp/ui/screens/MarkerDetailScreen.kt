@@ -174,6 +174,7 @@ fun DetailMarkerScreen(modifier: Modifier, Id: String, navigateBack: () -> Unit)
                         .clip(RoundedCornerShape(12.dp)),
                     contentScale = ContentScale.Crop
                 )
+                bitmap.value
             }else {
                 bitmap.value?.let {
                     Image(
